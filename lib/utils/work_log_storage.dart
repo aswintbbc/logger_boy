@@ -16,4 +16,11 @@ class WorkLogStorage {
     final jsonStr = jsonEncode(logs.map((e) => e.toJson()).toList());
     await prefs.setString("worklog", jsonStr);
   }
+
+  /// ✅ Delete log by date (yyyy-MM-dd)
+  Future<void> deleteLog(String date) async {
+    final logs = await loadLogs();
+    logs.removeWhere((log) => log.date == date);
+    await saveLogs(logs);
+  }
 }

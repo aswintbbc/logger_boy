@@ -19,6 +19,7 @@ class _LogListScreenState extends State<LogListScreen> {
   @override
   void initState() {
     super.initState();
+
     _load();
   }
 
@@ -63,6 +64,49 @@ class _LogListScreenState extends State<LogListScreen> {
       (a, b) => DateTime.parse(b.date).compareTo(DateTime.parse(a.date)),
     );
     return filtered;
+  }
+
+  Future<void> _deleteDay(String date) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Delete Log"),
+        content: Text("Are you sure you want to delete logs for $date?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await storage.deleteLog(date);
+      await _load();
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Deleted logs for $date")));
+      }
+    }
+  }
+
+  void _editDay(WorkDay day) async {
+    // Navigate to AddLogScreen with selected day
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddLogScreen(editingDay: day, storage: storage),
+      ),
+    );
+
+    // Refresh logs when returning
+    _load();
   }
 
   @override
@@ -127,6 +171,21 @@ class _LogListScreenState extends State<LogListScreen> {
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                   ),
+                                ),
+                                Spacer(),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blueAccent,
+                                  ),
+                                  onPressed: () => _editDay(log),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.redAccent,
+                                  ),
+                                  onPressed: () => _deleteDay(log.date),
                                 ),
                               ],
                             ),

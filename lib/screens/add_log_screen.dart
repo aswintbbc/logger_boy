@@ -5,7 +5,9 @@ import 'package:logger_boy/utils/work_log_storage.dart';
 
 class AddLogScreen extends StatefulWidget {
   final WorkLogStorage storage;
-  const AddLogScreen({super.key, required this.storage});
+  final WorkDay? editingDay;
+
+  const AddLogScreen({super.key, required this.storage, this.editingDay});
 
   @override
   State<AddLogScreen> createState() => _AddLogScreenState();
@@ -22,7 +24,12 @@ class _AddLogScreenState extends State<AddLogScreen> {
   @override
   void initState() {
     super.initState();
-    selectedDate = DateTime.now();
+
+    if (widget.editingDay != null) {
+      selectedDate = DateTime.parse(widget.editingDay!.date);
+    } else {
+      selectedDate = DateTime.now();
+    }
     _loadLocked();
   }
 
