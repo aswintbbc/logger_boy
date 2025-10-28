@@ -22,4 +22,6 @@ class Activity {
       slots: List<int>.from(json["slots"]),
     );
   }
+
+  double get totalHours => (slots.length * 0.5);
 }

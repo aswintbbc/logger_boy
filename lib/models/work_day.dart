@@ -19,4 +19,11 @@ class WorkDay {
           .toList(),
     );
   }
+
+  int get totalSlots => activities.fold(0, (sum, a) => sum + (a.slots.length));
+
+  double get totalHours => totalSlots * 0.5;
+
+  String get activitySummary =>
+      activities.map((a) => "${a.description} (${a.totalHours}h)").join(", ");
 }

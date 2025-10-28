@@ -45,6 +45,12 @@ class _LogListScreenState extends State<LogListScreen> {
     });
   }
 
+  double _calculateMonthHours(List<WorkDay> logs, String selectedMonth) {
+    return logs
+        .where((day) => day.date.startsWith(selectedMonth)) // e.g. "2025-09"
+        .fold(0.0, (sum, d) => sum + d.totalHours);
+  }
+
   List<WorkDay> get _filteredLogs {
     final filtered = logs.where((log) {
       final date = DateTime.parse(log.date);
@@ -85,6 +91,14 @@ class _LogListScreenState extends State<LogListScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                Spacer(),
+                Text(
+                  "Total: ${_calculateMonthHours(_filteredLogs, monthLabel).toStringAsFixed(1)} hrs",
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 IconButton(
                   icon: const Icon(Icons.chevron_right),
                   onPressed: () => _changeMonth(1),
@@ -92,6 +106,7 @@ class _LogListScreenState extends State<LogListScreen> {
               ],
             ),
           ),
+
           Expanded(
             child: _filteredLogs.isEmpty
                 ? const Center(child: Text("No logs for this month"))
@@ -103,7 +118,18 @@ class _LogListScreenState extends State<LogListScreen> {
                         title: Text(log.date),
                         children: log.activities.map((a) {
                           return ListTile(
-                            title: Text(a.description),
+                            title: Row(
+                              children: [
+                                Text(a.description),
+                                Text(
+                                  " - ${log.totalHours.toStringAsFixed(1)} hrs",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                             subtitle: Text(
                               "${a.half} - ${a.slots.map((s) => slotToTime(a.half, s)).join(', ')}",
                             ),
