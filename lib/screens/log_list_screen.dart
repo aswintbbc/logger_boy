@@ -160,40 +160,39 @@ class _LogListScreenState extends State<LogListScreen> {
                       final log = _filteredLogs[index];
                       return ExpansionTile(
                         title: Text(log.date),
-                        children: log.activities.map((a) {
-                          return ListTile(
-                            title: Row(
-                              children: [
-                                Text(a.description),
-                                Text(
-                                  " - ${log.totalHours.toStringAsFixed(1)} hrs",
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+                        children: [
+                          ...log.activities.map((a) {
+                            return ListTile(
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      '${a.description} - ${log.totalHours.toStringAsFixed(1)} hrs',
+                                      maxLines: 10,
+                                    ),
                                   ),
-                                ),
-                                Spacer(),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.edit,
-                                    color: Colors.blueAccent,
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blueAccent,
+                                    ),
+                                    onPressed: () => _editDay(log),
                                   ),
-                                  onPressed: () => _editDay(log),
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.redAccent,
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
+                                    ),
+                                    onPressed: () => _deleteDay(log.date),
                                   ),
-                                  onPressed: () => _deleteDay(log.date),
-                                ),
-                              ],
-                            ),
-                            subtitle: Text(
-                              "${a.half} - ${a.slots.map((s) => slotToTime(a.half, s)).join(', ')}",
-                            ),
-                          );
-                        }).toList(),
+                                ],
+                              ),
+                              subtitle: Text(
+                                "${a.half} - ${a.slots.map((s) => slotToTime(a.half, s)).join(', ')}",
+                              ),
+                            );
+                          }),
+                        ],
                       );
                     },
                   ),
